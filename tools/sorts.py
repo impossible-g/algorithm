@@ -10,6 +10,10 @@ class T:
         # print(new_arr)
 
     @classmethod
+    def swap(cls, i1, i2, arr):
+        arr[i1], arr[i2] = arr[i2], arr[i1]
+
+    @classmethod
     @run_time
     def select_sort(cls, arr: []) -> []:
         """
@@ -29,7 +33,7 @@ class T:
                     min_index = j
 
             # 位置互换
-            arr[i], arr[min_index] = arr[min_index], arr[i]
+            cls.swap(i, min_index, arr)
 
         return arr
 
@@ -49,7 +53,7 @@ class T:
             for j in range(i, 0, -1):
                 # [1:i:-1] 倒叙遍历，如果前一个数比当前数小，则换位
                 if arr[j] < arr[j - 1]:
-                    arr[j - 1], arr[j] = arr[j], arr[j - 1]
+                    cls.swap(j, j - 1, arr)
                 else:
                     break
 
@@ -79,6 +83,29 @@ class T:
 
         return arr
 
+    @classmethod
+    @run_time
+    def bubble_sort(cls, arr: []) -> []:
+        """
+        冒泡排序:
+            找到最大的，排到最后，n次循环这样的过程，最终排好
+        :param arr:
+        :return:
+        """
+        length = len(arr)
+
+        for i in range(length):
+
+            temp_index = 0
+            for j in range(0, length - i):
+                if arr[j] > arr[temp_index]:
+                    temp_index = j
+                    # arr[j], arr[j + 1] = arr[j + 1], arr[j]
+
+            cls.swap(length - i - 1, temp_index, arr)
+
+        return arr
+
 
 sort = T
 
@@ -90,4 +117,4 @@ if __name__ == '__main__':
     sort.verify(arr0, sort.select_sort(array.copy()))
     sort.verify(arr0, sort.insert_sort(array.copy()))
     sort.verify(arr0, sort.insert_sort_optimize(array.copy()))
-
+    sort.verify(arr0, sort.bubble_sort(array.copy()))
