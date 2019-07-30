@@ -83,11 +83,11 @@ class T:
 sort = T
 
 if __name__ == '__main__':
-    array = tool.build_test_list(1000, 0, 100000)
+    array = tool.build_test_list(10000, 0, 100000)
     print(array)
 
     arr0 = sorted(array)
-    sort.verify(arr0, sort.insert_sort_optimize(array))
+    sort.verify(arr0, sort.select_sort(array.copy()))
+    sort.verify(arr0, sort.insert_sort(array.copy()))
+    sort.verify(arr0, sort.insert_sort_optimize(array.copy()))
 
-    sort.verify(arr0, sort.select_sort(array))
-    sort.verify(arr0, sort.insert_sort(array))
