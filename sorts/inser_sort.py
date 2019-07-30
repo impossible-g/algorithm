@@ -4,7 +4,7 @@ from tools import run_time, tool
 
 
 @run_time
-def select_sort(arr: []) -> []:
+def inner_sort(arr: []) -> []:
     """
         选择排序:
             遍历列表，找到列表当前位置到最后位置的最小数，把这个最小数和当前值互换
