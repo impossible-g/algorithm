@@ -7,12 +7,13 @@ class T:
     @classmethod
     def verify(cls, arr, new_arr):
         print(arr == new_arr)
-        # print(new_arr)
+        print(new_arr)
 
     @classmethod
     def swap(cls, i1, i2, arr):
         arr[i1], arr[i2] = arr[i2], arr[i1]
 
+    # ------------------------ n^2 ------------------
     @classmethod
     @run_time
     def select_sort(cls, arr: []) -> []:
@@ -96,25 +97,101 @@ class T:
 
         for i in range(length):
 
-            temp_index = 0
+            max_index = 0
             for j in range(0, length - i):
-                if arr[j] > arr[temp_index]:
-                    temp_index = j
+                if arr[j] > arr[max_index]:
+                    max_index = j
                     # arr[j], arr[j + 1] = arr[j + 1], arr[j]
 
-            cls.swap(length - i - 1, temp_index, arr)
+            cls.swap(length - i - 1, max_index, arr)
 
+        return arr
+
+    # --------------------- n(logn) ---------------------
+    @classmethod
+    def __merge(cls, arr, l, mid, r):
+        new_arr = [None] * (r - l + 1)
+
+        for i in range(l, r + 1):
+            new_arr[i - l] = arr[i]
+
+        i = l
+        j = mid + 1
+        for k in range(l, r + 1):
+            if i > mid:
+                arr[k] = new_arr[j - l]
+                j += 1
+            elif j > r:
+                arr[k] = new_arr[i - l]
+                i += 1
+            elif new_arr[i - l] < new_arr[j - l]:
+                arr[k] = new_arr[i - l]
+                i += 1
+            else:
+                arr[k] = new_arr[j - l]
+                j += 1
+
+    @classmethod
+    def __merger_sort(cls, arr, l, r):
+        if l >= r:
+            return
+
+        mid = l + r - 1 >> 1
+        cls.__merger_sort(arr, l, mid)
+        cls.__merger_sort(arr, mid + 1, r)
+
+        arr_l = []
+        arr_r = []
+        n1 = mid - l + 1
+        n2 = r - mid
+        for i in range(0, n1):
+            arr_l.append(arr[l + i])
+
+        for j in range(0, n2):
+            arr_r.append(arr[mid + 1 + j])
+
+        i = j = 0
+        while i < len(arr_l) and j < len(arr_r):
+            if arr_l[i] > arr_r[j]:
+                arr[l] = arr_l[i]
+                i += 1
+            elif arr_l[i] < arr_r[j]:
+                arr[l] = arr_r[j]
+                j += 1
+            l += 1
+
+        while i < len(arr_l) or j < len(arr_r):
+            if i < len(arr_l):
+                arr[l] = arr_l[i]
+                i += 1
+            elif j < len(arr_r):
+                arr[l] = arr_r[j]
+                j += 1
+            l += 1
+
+    @classmethod
+    @run_time
+    def merge_sort(cls, arr: []) -> []:
+        """
+        归并排序
+        :param arr:
+        :return:
+        """
+        length = len(arr)
+        cls.__merger_sort(arr, 0, length - 1)
         return arr
 
 
 sort = T
 
 if __name__ == '__main__':
-    array = tool.build_test_list(10000, 0, 100000)
+    array = tool.build_test_list(4, 0, 100)
+    array = [12, 11, 13, 5, 6, 7]
     print(array)
 
     arr0 = sorted(array)
-    sort.verify(arr0, sort.select_sort(array.copy()))
-    sort.verify(arr0, sort.insert_sort(array.copy()))
-    sort.verify(arr0, sort.insert_sort_optimize(array.copy()))
-    sort.verify(arr0, sort.bubble_sort(array.copy()))
+    # sort.verify(arr0, sort.select_sort(array.copy()))
+    # sort.verify(arr0, sort.insert_sort(array.copy()))
+    # sort.verify(arr0, sort.insert_sort_optimize(array.copy()))
+    # sort.verify(arr0, sort.bubble_sort(array.copy()))
+    sort.verify(arr0, sort.merge_sort(array.copy()))
