@@ -7,7 +7,7 @@ class T:
     @classmethod
     def verify(cls, arr, new_arr):
         print(arr == new_arr)
-        print(new_arr)
+        # print(new_arr)
 
     @classmethod
     def swap(cls, i1, i2, arr):
@@ -110,10 +110,7 @@ class T:
     # --------------------- n(logn) ---------------------
     @classmethod
     def __merge(cls, arr, l, mid, r):
-        new_arr = [None] * (r - l + 1)
-
-        for i in range(l, r + 1):
-            new_arr[i - l] = arr[i]
+        new_arr = arr[l: r + 1]
 
         i = l
         j = mid + 1
@@ -139,35 +136,7 @@ class T:
         mid = l + r - 1 >> 1
         cls.__merger_sort(arr, l, mid)
         cls.__merger_sort(arr, mid + 1, r)
-
-        arr_l = []
-        arr_r = []
-        n1 = mid - l + 1
-        n2 = r - mid
-        for i in range(0, n1):
-            arr_l.append(arr[l + i])
-
-        for j in range(0, n2):
-            arr_r.append(arr[mid + 1 + j])
-
-        i = j = 0
-        while i < len(arr_l) and j < len(arr_r):
-            if arr_l[i] > arr_r[j]:
-                arr[l] = arr_l[i]
-                i += 1
-            elif arr_l[i] < arr_r[j]:
-                arr[l] = arr_r[j]
-                j += 1
-            l += 1
-
-        while i < len(arr_l) or j < len(arr_r):
-            if i < len(arr_l):
-                arr[l] = arr_l[i]
-                i += 1
-            elif j < len(arr_r):
-                arr[l] = arr_r[j]
-                j += 1
-            l += 1
+        cls.__merge(arr, l, mid, r)
 
     @classmethod
     @run_time
@@ -181,15 +150,21 @@ class T:
         cls.__merger_sort(arr, 0, length - 1)
         return arr
 
+    @classmethod
+    @run_time
+    def time_sort(cls, arr: []) -> []:
+        """python自带排序：TimeSort"""
+        arr.sort()
+        return arr
+
 
 sort = T
 
 if __name__ == '__main__':
-    array = tool.build_test_list(4, 0, 100)
-    array = [12, 11, 13, 5, 6, 7]
-    print(array)
+    array = tool.build_test_list(10000, 0, 1000000)
 
-    arr0 = sorted(array)
+    arr0 = sort.s(array.copy())
+
     # sort.verify(arr0, sort.select_sort(array.copy()))
     # sort.verify(arr0, sort.insert_sort(array.copy()))
     # sort.verify(arr0, sort.insert_sort_optimize(array.copy()))
