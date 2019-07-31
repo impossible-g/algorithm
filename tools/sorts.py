@@ -6,7 +6,8 @@ from tools import run_time, tool
 class T:
     @classmethod
     def verify(cls, arr, new_arr):
-        print(arr == new_arr)
+        if arr != new_arr:
+            print(arr == new_arr)
         # print(new_arr)
 
     @classmethod
@@ -110,21 +111,25 @@ class T:
     # --------------------- n(logn) ---------------------
     @classmethod
     def __merge(cls, arr, l, mid, r):
-        new_arr = arr[l: r + 1]
+        new_arr = arr[l: r + 1]  # [l:r+1] 的合并的辅助数组
 
-        i = l
-        j = mid + 1
+        i = l  # 左边数组下标开始位
+        j = mid + 1  # 右边数组下标开始位
         for k in range(l, r + 1):
             if i > mid:
+                # 如果左边数组超出边界，则合并右边数组
                 arr[k] = new_arr[j - l]
                 j += 1
             elif j > r:
+                # 如果右边数组超出边界，则合并左边数组
                 arr[k] = new_arr[i - l]
                 i += 1
             elif new_arr[i - l] < new_arr[j - l]:
+                # 如果左边数组第一个元素小于右边数组第一个元素，则第一个元素位左边数组第一个元素，左边数组下标位加1
                 arr[k] = new_arr[i - l]
                 i += 1
             else:
+                # 反之
                 arr[k] = new_arr[j - l]
                 j += 1
 
@@ -133,7 +138,7 @@ class T:
         if l >= r:
             return
 
-        mid = l + r - 1 >> 1
+        mid = l + r >> 1
         cls.__merger_sort(arr, l, mid)
         cls.__merger_sort(arr, mid + 1, r)
         cls.__merge(arr, l, mid, r)
@@ -142,7 +147,8 @@ class T:
     @run_time
     def merge_sort(cls, arr: []) -> []:
         """
-        归并排序
+        归并排序：
+            两两拆分，最后排序
         :param arr:
         :return:
         """
@@ -161,12 +167,12 @@ class T:
 sort = T
 
 if __name__ == '__main__':
-    array = tool.build_test_list(10000, 0, 1000000)
+    array = tool.build_test_list(1000, 0, 100000)
 
-    arr0 = sort.s(array.copy())
+    arr0 = sort.time_sort(array.copy())
 
-    # sort.verify(arr0, sort.select_sort(array.copy()))
-    # sort.verify(arr0, sort.insert_sort(array.copy()))
-    # sort.verify(arr0, sort.insert_sort_optimize(array.copy()))
-    # sort.verify(arr0, sort.bubble_sort(array.copy()))
+    sort.verify(arr0, sort.select_sort(array.copy()))
+    sort.verify(arr0, sort.insert_sort(array.copy()))
+    sort.verify(arr0, sort.insert_sort_optimize(array.copy()))
+    sort.verify(arr0, sort.bubble_sort(array.copy()))
     sort.verify(arr0, sort.merge_sort(array.copy()))
