@@ -13,7 +13,8 @@ def run_time(func):
         begin = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        print(f"{func.__name__}: {end - begin} s")
+        if not kwargs.get("use"):
+            print(f"{func.__name__}: {end - begin} s")
         return result
 
     return inner

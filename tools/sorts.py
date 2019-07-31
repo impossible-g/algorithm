@@ -1,5 +1,7 @@
 # _*_coding:utf-8_*_
 # __author: a123456
+import random
+
 from tools import run_time, tool
 
 
@@ -7,6 +9,7 @@ class T:
     @classmethod
     def verify(cls, arr, new_arr):
         if arr != new_arr:
+            print(new_arr)
             print(arr == new_arr)
         # print(new_arr)
 
@@ -41,37 +44,24 @@ class T:
 
     @classmethod
     @run_time
-    def insert_sort(cls, arr: []) -> []:
+    def insert_sort(cls, arr: [], l=None, r=None, use=0) -> []:
         """
         插入排序:
             纸牌玩法，如果新牌在老牌中间的大小，则把新牌放入中间
         :param arr:
+        :param l:
+        :param r:
+        :param use: 1: 不打印时间
         :return: []
         """
-        length = len(arr)
+        if l and r:
+            length = r - l + 1
+            _range = range(l, length)
+        else:
+            length = len(arr)
+            _range = range(1, length)
 
-        for i in range(1, length):
-
-            for j in range(i, 0, -1):
-                # [1:i:-1] 倒叙遍历，如果前一个数比当前数小，则换位
-                if arr[j] < arr[j - 1]:
-                    cls.swap(j, j - 1, arr)
-                else:
-                    break
-
-        return arr
-
-    @classmethod
-    @run_time
-    def insert_sort_optimize(cls, arr: []) -> []:
-        """
-        插入排序优化: 对于基本上有序的数据，有很大优势
-        :param arr:
-        :return:
-        """
-        length = len(arr)
-
-        for i in range(1, length):
+        for i in _range:
 
             temp = arr[i]
             j = i  # 当前元素存放位置
@@ -138,16 +128,21 @@ class T:
         if l >= r:
             return
 
+        # if r - l <= 15:
+        #     cls.insert_sort(arr, l, r, use=1)
+        #     return
+
         mid = l + r >> 1
         cls.__merger_sort(arr, l, mid)
         cls.__merger_sort(arr, mid + 1, r)
-        cls.__merge(arr, l, mid, r)
+        if arr[mid] > arr[mid + 1]:
+            cls.__merge(arr, l, mid, r)
 
     @classmethod
     @run_time
-    def merge_sort(cls, arr: []) -> []:
+    def merge_sort_ub(cls, arr: []) -> []:
         """
-        归并排序：
+        归并排序：自上而下的归并
             两两拆分，最后排序
         :param arr:
         :return:
@@ -156,6 +151,93 @@ class T:
         cls.__merger_sort(arr, 0, length - 1)
         return arr
 
+    @classmethod
+    @run_time
+    def merge_sort_bu(cls, arr: []) -> []:
+        """
+        归并排序：自下而上的归并
+            两两拆分，最后排序
+        :param arr:
+        :return:
+        """
+        length = len(arr)
+        sz = 1
+
+        while sz <= length:
+            for i in range(0, length - sz, 2 * sz):
+                if arr[i + sz - 1] > arr[i + sz]:
+                    # 对 [i:i+sz-1] 和 [i+sz: i+2*sz-1] 进行归并排序
+                    cls.__merge(arr, i, i + sz - 1, min(i + 2 * sz - 1, length - 1))
+
+            sz += sz
+
+        return arr
+
+    @classmethod
+    def __partition(cls, arr, l, r):
+        """
+        使当前[l:r]区间的数组，以第一个数v分割，左边比v小，右边比v大
+        :param arr:
+        :param l:
+        :param r:
+        :return: 分割数组的中间下标
+        """
+        # p = l  # 分割数组的下标
+        # cls.swap(random.randint(l, r), l, arr)  # 避免数组基本上是有序的
+        # v = arr[l]
+        #
+        # for i in range(l + 1, r + 1):
+        #     if arr[i] < v:
+        #         # 如果p下标之后的元素比分割数组的元素v小，则把当前元素和p下标所在位置交换
+        #         p += 1
+        #         cls.swap(i, p, arr)
+        #
+        # cls.swap(l, p, arr)
+        # return p
+        # ============= 处理数组里有大量重复元素
+        p = r  # 分割数组的下标
+        cls.swap(random.randint(l, r), l, arr)  # 避免数组基本上是有序的
+        v = arr[l]
+        i = l + 1
+        while 1:
+            while i <= r and arr[i] < v: i += 1  # 找到第一个小于v元素的下标
+            while p > l and arr[p] > v: p -= 1  # 找到第一个大于v元素的下标
+            if i > p: break  # 找到了临界值
+            cls.swap(i, p, arr)
+            i += 1
+            p -= 1
+
+        cls.swap(l, p, arr)
+        return p
+
+    @classmethod
+    def __quick_sort(cls, arr, l, r):
+        """
+        :param arr:
+        :param l:
+        :param r:
+        :return:
+        """
+        if l >= r:
+            return
+
+        p = cls.__partition(arr, l, r)
+        cls.__quick_sort(arr, l, p - 1)
+        cls.__quick_sort(arr, p + 1, r)
+
+    @classmethod
+    @run_time
+    def quick_sort(cls, arr: []) -> []:
+        """
+        快速排序：
+            每次分割数组，取一个中间值，使得左边比中间值小，右边比中间值大，递归作用
+        :param arr:
+        :return:
+        """
+        cls.__quick_sort(arr, 0, len(arr) - 1)
+        return arr
+
+    # ===================== time_sort python 内置排序
     @classmethod
     @run_time
     def time_sort(cls, arr: []) -> []:
@@ -167,12 +249,13 @@ class T:
 sort = T
 
 if __name__ == '__main__':
-    array = tool.build_test_list(1000, 0, 100000)
-
+    array = tool.build_test_list(10000, 0, 10000)
+    # array.sort()
     arr0 = sort.time_sort(array.copy())
 
-    sort.verify(arr0, sort.select_sort(array.copy()))
-    sort.verify(arr0, sort.insert_sort(array.copy()))
-    sort.verify(arr0, sort.insert_sort_optimize(array.copy()))
-    sort.verify(arr0, sort.bubble_sort(array.copy()))
-    sort.verify(arr0, sort.merge_sort(array.copy()))
+    # sort.verify(arr0, sort.select_sort(array.copy()))
+    # sort.verify(arr0, sort.insert_sort(array.copy()))
+    # sort.verify(arr0, sort.bubble_sort(array.copy()))
+    sort.verify(arr0, sort.merge_sort_ub(array.copy()))
+    sort.verify(arr0, sort.merge_sort_bu(array.copy()))
+    sort.verify(arr0, sort.quick_sort(array.copy()))
