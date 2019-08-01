@@ -68,7 +68,7 @@ class T:
             while j > 0 and arr[j - 1] > temp:
                 # 倒叙遍历如果碰到比当前元素大的，使比当前元素大的元素向后移一位
                 arr[j] = arr[j - 1]
-                j -= 1
+                j -= 1  # 已经交换，但是还没有和前面的当前偏移量的值比较，所以-偏移量
 
             # 把当前元素放入应该放入位置
             arr[j] = temp
@@ -282,6 +282,29 @@ class T:
         cls.__quick_sort3_ways(arr, 0, len(arr) - 1)
         return arr
 
+    @classmethod
+    @run_time
+    def shell_sort(cls, arr: []) -> []:
+        """
+
+        :param arr:
+        :return:
+        """
+        offset = len(arr)
+
+        while offset > 1:
+            offset = offset // 2
+
+            for i in range(offset, len(arr)):
+
+                # 插入排序
+                j = i - offset
+                while j >= 0 and arr[j] > arr[j + offset]:
+                    cls.swap(j, j + offset, arr)
+                    j -= offset
+
+        return arr
+
     # ===================== time_sort python 内置排序
     @classmethod
     @run_time
@@ -294,7 +317,7 @@ class T:
 sort = T
 
 if __name__ == '__main__':
-    array = tool.build_test_list(1000, 0, 1)
+    array = tool.build_test_list(10009, 0, 1000000)
     # array.sort()
     arr0 = sort.time_sort(array.copy())
 
@@ -307,3 +330,4 @@ if __name__ == '__main__':
     sort.verify(arr0, sort.merge_sort_bu(array.copy()))
     sort.verify(arr0, sort.quick_sort(array.copy()))
     sort.verify(arr0, sort.quick_sort3_ways(array.copy()))
+    sort.verify(arr0, sort.shell_sort(array.copy()))
