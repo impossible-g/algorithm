@@ -237,6 +237,51 @@ class T:
         cls.__quick_sort(arr, 0, len(arr) - 1)
         return arr
 
+    @classmethod
+    def __partition3_ways(cls, arr, l, r):
+        cls.swap(random.randint(l, r), l, arr)  # 避免数组基本上是有序的
+        v = arr[l]
+
+        lt = l  # [l:lt] < v
+        gt = r + 1  # [gt: r] > v
+        i = l + 1  # 处理过的下标
+        while i < gt:
+            if arr[i] < v:
+                # 如果当前位小于v，把当前位和第二个元素交换
+                cls.swap(i, lt + 1, arr)
+                i += 1
+                lt += 1
+            elif arr[i] > v:
+                # 如果当前位大于v，把当前位和最后一个元素交换
+                cls.swap(i, gt - 1, arr)
+                gt -= 1
+            else:
+                i += 1
+
+        cls.swap(l, lt, arr)  # 把第一个位置的元素与最后一个小于v的元素交换
+        return lt, gt
+
+    @classmethod
+    def __quick_sort3_ways(cls, arr, l, r):
+        if l >= r:
+            return
+
+        lt, gt = cls.__partition3_ways(arr, l, r)
+        cls.__quick_sort3_ways(arr, l, lt - 1)
+        cls.__quick_sort3_ways(arr, gt, r)
+
+    @classmethod
+    @run_time
+    def quick_sort3_ways(cls, arr: []) -> []:
+        """
+        快速排序：
+            三路排序算法，[l: lt] > v, [lt: gt] = v, [gt: r] < v
+        :param arr:
+        :return:
+        """
+        cls.__quick_sort3_ways(arr, 0, len(arr) - 1)
+        return arr
+
     # ===================== time_sort python 内置排序
     @classmethod
     @run_time
@@ -249,13 +294,16 @@ class T:
 sort = T
 
 if __name__ == '__main__':
-    array = tool.build_test_list(10000, 0, 10000)
+    array = tool.build_test_list(1000, 0, 1)
     # array.sort()
     arr0 = sort.time_sort(array.copy())
 
+    # ============= n^2
     # sort.verify(arr0, sort.select_sort(array.copy()))
     # sort.verify(arr0, sort.insert_sort(array.copy()))
     # sort.verify(arr0, sort.bubble_sort(array.copy()))
+    # ============= nlogn
     sort.verify(arr0, sort.merge_sort_ub(array.copy()))
     sort.verify(arr0, sort.merge_sort_bu(array.copy()))
     sort.verify(arr0, sort.quick_sort(array.copy()))
+    sort.verify(arr0, sort.quick_sort3_ways(array.copy()))
