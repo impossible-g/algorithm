@@ -200,14 +200,14 @@ class T:
         v = arr[l]
         i = l + 1
         while 1:
-            while i <= r and arr[i] < v: i += 1  # 找到第一个小于v元素的下标
-            while p > l and arr[p] > v: p -= 1  # 找到第一个大于v元素的下标
-            if i > p: break  # 找到了临界值
-            cls.swap(i, p, arr)
-            i += 1
+            while i <= r and arr[i] < v: i += 1  # 从左边开始，如果当前元素小于中间元素，位置不变，左值加一
+            while p > l and arr[p] > v: p -= 1  # 从右边开始，如果当前元素大于中间元素，位置不变，右值减一
+            if i > p: break  # 左边和右边已经分开
+            cls.swap(i, p, arr)  # 大值放在右边，小值放在左边，无序的
+            i += 1  # 完成一次，左值加一，右值减一
             p -= 1
 
-        cls.swap(l, p, arr)
+        cls.swap(l, p, arr)  #
         return p
 
     @classmethod
@@ -286,7 +286,8 @@ class T:
     @run_time
     def shell_sort(cls, arr: []) -> []:
         """
-
+        希尔排序：
+            使用偏移量，每次比较几个子序列，用插入排序把数据排好
         :param arr:
         :return:
         """
@@ -296,7 +297,6 @@ class T:
             offset = offset // 2
 
             for i in range(offset, len(arr)):
-
                 # 插入排序
                 j = i - offset
                 while j >= 0 and arr[j] > arr[j + offset]:
