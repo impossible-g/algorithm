@@ -37,9 +37,6 @@ def partition(arr, l, r):
 
 def n_largest_ele(arr, l, r, n):
     # 获取第n大的元素
-    if l >= r:
-        return
-
     i = r - n + 1  # 第n大的元素的下标
     # i = n - 1  #
     p = partition(arr, l, r)  # 以p下标分割

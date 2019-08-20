@@ -12,3 +12,6 @@
 > tools 工具
 >> helper 通用工具
 >> sorts 排序
+
+> tests 例子
+>> n_largest_ele 在一个数组中找到第n大的数
