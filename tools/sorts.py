@@ -3,6 +3,7 @@
 import random
 
 from tools import run_time, tool
+from tree import MaxHeap, MaxHeap2
 
 
 class T:
@@ -12,10 +13,6 @@ class T:
             print(new_arr)
             print(arr == new_arr)
         # print(new_arr)
-
-    @classmethod
-    def swap(cls, i1, i2, arr):
-        arr[i1], arr[i2] = arr[i2], arr[i1]
 
     # ------------------------ n^2 ------------------
     @classmethod
@@ -38,7 +35,7 @@ class T:
                     min_index = j
 
             # 位置互换
-            cls.swap(i, min_index, arr)
+            tool.swap(i, min_index, arr)
 
         return arr
 
@@ -94,7 +91,7 @@ class T:
                     max_index = j
                     # arr[j], arr[j + 1] = arr[j + 1], arr[j]
 
-            cls.swap(length - i - 1, max_index, arr)
+            tool.swap(length - i - 1, max_index, arr)
 
         return arr
 
@@ -183,31 +180,31 @@ class T:
         :return: 分割数组的中间下标
         """
         # p = l  # 分割数组的下标
-        # cls.swap(random.randint(l, r), l, arr)  # 避免数组基本上是有序的
+        # tool.swap(random.randint(l, r), l, arr)  # 避免数组基本上是有序的
         # v = arr[l]
         #
         # for i in range(l + 1, r + 1):
         #     if arr[i] < v:
         #         # 如果p下标之后的元素比分割数组的元素v小，则把当前元素和p下标所在位置交换
         #         p += 1
-        #         cls.swap(i, p, arr)
+        #         tool.swap(i, p, arr)
         #
-        # cls.swap(l, p, arr)
+        # tool.swap(l, p, arr)
         # return p
         # ============= 处理数组里有大量重复元素
         p = r  # 分割数组的下标
-        cls.swap(random.randint(l, r), l, arr)  # 避免数组基本上是有序的
+        tool.swap(random.randint(l, r), l, arr)  # 避免数组基本上是有序的
         v = arr[l]
         i = l + 1
         while 1:
             while i <= r and arr[i] < v: i += 1  # 从左边开始，如果当前元素小于中间元素，位置不变，左值加一
             while p > l and arr[p] > v: p -= 1  # 从右边开始，如果当前元素大于中间元素，位置不变，右值减一
             if i > p: break  # 左边和右边已经分开
-            cls.swap(i, p, arr)  # 大值放在右边，小值放在左边，无序的
+            tool.swap(i, p, arr)  # 大值放在右边，小值放在左边，无序的
             i += 1  # 完成一次，左值加一，右值减一
             p -= 1
 
-        cls.swap(l, p, arr)  #
+        tool.swap(l, p, arr)  #
         return p
 
     @classmethod
@@ -239,7 +236,7 @@ class T:
 
     @classmethod
     def __partition3_ways(cls, arr, l, r):
-        cls.swap(random.randint(l, r), l, arr)  # 避免数组基本上是有序的
+        tool.swap(random.randint(l, r), l, arr)  # 避免数组基本上是有序的
         v = arr[l]
 
         lt = l  # [l:lt] < v
@@ -248,17 +245,17 @@ class T:
         while i < gt:
             if arr[i] < v:
                 # 如果当前位小于v，把当前位和第二个元素交换
-                cls.swap(i, lt + 1, arr)
+                tool.swap(i, lt + 1, arr)
                 i += 1
                 lt += 1
             elif arr[i] > v:
                 # 如果当前位大于v，把当前位和最后一个元素交换
-                cls.swap(i, gt - 1, arr)
+                tool.swap(i, gt - 1, arr)
                 gt -= 1
             else:
                 i += 1
 
-        cls.swap(l, lt, arr)  # 把第一个位置的元素与最后一个小于v的元素交换
+        tool.swap(l, lt, arr)  # 把第一个位置的元素与最后一个小于v的元素交换
         return lt, gt
 
     @classmethod
@@ -300,8 +297,26 @@ class T:
                 # 插入排序
                 j = i - offset
                 while j >= 0 and arr[j] > arr[j + offset]:
-                    cls.swap(j, j + offset, arr)
+                    tool.swap(j, j + offset, arr)
                     j -= offset
+
+        return arr
+
+    @classmethod
+    @run_time
+    def heap_sort1(cls, arr):
+        max_heap = MaxHeap(arr)
+        for i in range(len(arr))[::-1]:
+            arr[i] = max_heap.pop()
+
+        return arr
+
+    @classmethod
+    @run_time
+    def heap_sort2(cls, arr):
+        max_heap = MaxHeap2(arr)
+        for i in range(len(arr))[::-1]:
+            arr[i] = max_heap.pop()
 
         return arr
 
@@ -317,7 +332,7 @@ class T:
 sort = T
 
 if __name__ == '__main__':
-    array = tool.build_test_list(10009, 0, 1000000)
+    array = tool.build_test_list(10000, 0, 1000000)
     # array.sort()
     arr0 = sort.time_sort(array.copy())
 
@@ -331,3 +346,5 @@ if __name__ == '__main__':
     sort.verify(arr0, sort.quick_sort(array.copy()))
     sort.verify(arr0, sort.quick_sort3_ways(array.copy()))
     sort.verify(arr0, sort.shell_sort(array.copy()))
+    sort.verify(arr0, sort.heap_sort1(array.copy()))
+    sort.verify(arr0, sort.heap_sort2(array.copy()))

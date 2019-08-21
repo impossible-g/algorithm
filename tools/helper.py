@@ -57,6 +57,10 @@ class T:
 
         return arr
 
+    @classmethod
+    def swap(cls, i1, i2, arr):
+        arr[i1], arr[i2] = arr[i2], arr[i1]
+
 
 tool = T
 
