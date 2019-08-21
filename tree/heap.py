@@ -66,9 +66,10 @@ class MaxHeap:
         return result
 
 
-li = tool.build_test_list(15, 0, 100)
-max_heap = MaxHeap(li)
-print(max_heap.heap)
-m = max_heap.pop()
-print(m)
-print(max_heap.heap)
+if __name__ == '__main__':
+    li = tool.build_test_list(15, 0, 100)
+    max_heap = MaxHeap(li)
+    print(max_heap.heap)
+    m = max_heap.pop()
+    print(m)
+    print(max_heap.heap)
