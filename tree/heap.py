@@ -26,7 +26,7 @@ class BaseMaxHeap:
         return index * 2
 
     def _get_parent(self, index):
-        return index // 2
+        return index >> 1
 
     def _shift_up(self, k):
         """
@@ -38,7 +38,8 @@ class BaseMaxHeap:
         parent = self._get_parent(k)
         while k > 1 and self.heap[parent] < self.heap[k]:
             tool.swap(parent, k, self.heap)
-            parent = self._get_parent(k)
+            k = parent
+            parent = self._get_parent(parent)
 
     def _shift_down(self, k=1):
         """
@@ -96,11 +97,55 @@ class MaxHeap2(BaseMaxHeap):
             i -= 1
 
 
+class MaxHeap3(BaseMaxHeap):
+    def __init__(self, arr: []):
+        self.heap = arr
+
+        i = len(self.heap) - 1 >> 1
+        while i >= 0:
+            self._shift_down(i, len(self.heap))
+            i -= 1
+
+        for j in range(len(self.heap) - 1, 0, -1):
+            tool.swap(0, j, arr)
+            self._shift_down(0, j)
+
+    def _get_right_child(self, index):
+        return self._get_left_child(index) + 1
+
+    def _get_left_child(self, index):
+        return index * 2 + 1
+
+    def _get_parent(self, index):
+        return index // 2
+
+    def _shift_down(self, k=1, count=1):
+        """
+        比较小的数据下沉
+            从子节点找到最大的数据，使其和父节点交换位置，重复这个操作到，最后元素
+        :param k:
+        :return:
+        """
+        while self._get_left_child(k) < count:
+            j = self._get_left_child(k)  # 默认使用左节点交换位置
+            if j + 1 < count and self.heap[j + 1] > self.heap[j]:
+                # 如果有右节点并且右节点的值大于左节点的值，使用右节点交换
+                j += 1
+
+            if self.heap[k] >= self.heap[j]:
+                break
+
+            tool.swap(k, j, self.heap)
+            k = j
+
+
 if __name__ == '__main__':
-    li = tool.build_test_list(15, 0, 100)
+    li = tool.build_test_list(16, 0, 100)
     print(li)
-    max_heap = MaxHeap2(li)
-    # max_heap = MaxHeap(li)
+    # max_heap = MaxHeap2(li)
+    max_heap = MaxHeap(li)
+    # MaxHeap3(li)
+    # print(li)
     print(max_heap.heap)
     while len(max_heap) > 0:
         print(max_heap.pop(), end="\t")

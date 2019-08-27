@@ -3,7 +3,7 @@
 import random
 
 from tools import run_time, tool
-from tree import MaxHeap, MaxHeap2
+from tree import MaxHeap, MaxHeap2, MaxHeap3
 
 
 class T:
@@ -320,6 +320,12 @@ class T:
 
         return arr
 
+    @classmethod
+    @run_time
+    def heap_sort3(cls, arr):
+        max_heap = MaxHeap3(arr)
+        return max_heap.heap
+
     # ===================== time_sort python 内置排序
     @classmethod
     @run_time
@@ -348,3 +354,4 @@ if __name__ == '__main__':
     sort.verify(arr0, sort.shell_sort(array.copy()))
     sort.verify(arr0, sort.heap_sort1(array.copy()))
     sort.verify(arr0, sort.heap_sort2(array.copy()))
+    sort.verify(arr0, sort.heap_sort3(array.copy()))
