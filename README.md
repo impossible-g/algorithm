@@ -4,7 +4,7 @@
 >> pass
 
 > tree 树形结构
->> pass
+>> heap 堆结构
 
 > graph 图结构
 >> pass
