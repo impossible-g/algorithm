@@ -338,14 +338,14 @@ class T:
 sort = T
 
 if __name__ == '__main__':
-    array = tool.build_test_list(10000, 0, 1000000)
+    array = tool.build_test_list(5000, 0, 1000000)
     # array.sort()
     arr0 = sort.time_sort(array.copy())
 
     # ============= n^2
-    # sort.verify(arr0, sort.select_sort(array.copy()))
-    # sort.verify(arr0, sort.insert_sort(array.copy()))
-    # sort.verify(arr0, sort.bubble_sort(array.copy()))
+    sort.verify(arr0, sort.select_sort(array.copy()))
+    sort.verify(arr0, sort.insert_sort(array.copy()))
+    sort.verify(arr0, sort.bubble_sort(array.copy()))
     # ============= nlogn
     sort.verify(arr0, sort.merge_sort_ub(array.copy()))
     sort.verify(arr0, sort.merge_sort_bu(array.copy()))
