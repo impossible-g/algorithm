@@ -2,7 +2,7 @@
 # __author: a123456
 import random
 
-from tools import sort
+from tools import sort, tool
 
 
 def partition(arr, l, r):
@@ -15,7 +15,7 @@ def partition(arr, l, r):
     """
     p = r
     n = random.randint(l, r)
-    sort.swap(l, n, arr)
+    tool.swap(l, n, arr)
     v = arr[l]
     i = l + 1
 
@@ -26,11 +26,11 @@ def partition(arr, l, r):
             p -= 1
         if i > p:
             break
-        sort.swap(i, p, arr)
+        tool.swap(i, p, arr)
         i += 1
         p -= 1
 
-    sort.swap(l, p, arr)
+    tool.swap(l, p, arr)
 
     return p
 
