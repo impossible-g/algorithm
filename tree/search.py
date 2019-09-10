@@ -6,15 +6,17 @@ from tools import tool, sort
 class S:
     @classmethod
     def binary_search(cls, arr: [], e):
-        left = 0
-        right = len(arr) - 1
+        left = 0  # 左边界
+        right = len(arr) - 1  # 右边界
 
         while left <= right:
-            m = left + right >> 1
+            m = left + right >> 1  # 找寻一个中间值
 
             if arr[m] > e:
+                # 如果中间值大于需查找值，则抛弃右区间数据
                 right = m - 1
             elif arr[m] < e:
+                # 如果中间值小于需查找值，则抛弃左区间数据
                 left = m + 1
             else:
                 return m
