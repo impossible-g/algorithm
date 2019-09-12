@@ -4,6 +4,12 @@ from tools import tool, sort, run_time
 
 
 class S:
+
+    @classmethod
+    @run_time
+    def index(cls, arr: [], e):
+        return arr.index(e)
+
     @classmethod
     @run_time
     def binary_search(cls, arr: [], e):
@@ -11,7 +17,8 @@ class S:
         right = len(arr) - 1  # 右边界
 
         while left <= right:
-            m = left + right >> 1  # 找寻一个中间值
+            # m = left + right >> 1  # 找寻一个中间值
+            m = left + (right - left >> 1)
 
             if arr[m] > e:
                 # 如果中间值大于需查找值，则抛弃右区间数据
@@ -27,11 +34,14 @@ search = S
 
 if __name__ == '__main__':
 
-    li = tool.build_test_list(160000000, 0, 1000000000)
+    li = tool.build_test_list(16000000, 0, 1000000000)
     n = 5
     li = sorted(li)
 
     i = search.binary_search(li, li[n])
+    l1 = search.index(li, li[n])
     if n != i:
         print(i, n)
         print(li)
+
+
