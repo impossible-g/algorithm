@@ -1,8 +1,6 @@
 # _*_coding:utf-8_*_
 # __author: a123456
-import math
-
-from tools import tool
+from tools.helper import tool
 
 
 class BaseMaxHeap:

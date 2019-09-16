@@ -1,6 +1,65 @@
 # _*_coding:utf-8_*_
 # __author: a123456
-class BinarySearchTree:
+import queue
+import sys
+
+from tools.helper import tool
+
+
+class Traverse:
+    def operate(self, node):
+        print(f"{node['value']}", end="\t")
+
+    def pre_order(self, node):
+        """
+        前序遍历，访问根节点，遍历左节点，遍历右节点
+        """
+        if node:
+            self.operate(node)
+            getattr(self, sys._getframe().f_code.co_name)(node["left"])
+            getattr(self, sys._getframe().f_code.co_name)(node["right"])
+
+    def in_order(self, node):
+        """
+        中序遍历，遍历左节点，访问根节点，遍历右节点
+        """
+        if node:
+            getattr(self, sys._getframe().f_code.co_name)(node["left"])
+            self.operate(node)
+            getattr(self, sys._getframe().f_code.co_name)(node["right"])
+
+    def post_order(self, node):
+        """
+        后序遍历，遍历左节点，遍历右节点，访问根节点
+        """
+        if node:
+            getattr(self, sys._getframe().f_code.co_name)(node["left"])
+            getattr(self, sys._getframe().f_code.co_name)(node["right"])
+            self.operate(node)
+
+    def level_order(self, node):
+        """
+        层序遍历，借助队列实现，按层级结构打印出来
+        """
+        if not node:
+            return -1
+
+        q = queue.Queue()
+        q.put(node)
+
+        while not q.empty():
+            _node = q.get()
+
+            self.operate(_node)
+
+            if _node.get("left"):
+                q.put(_node["left"])
+
+            if _node.get("right"):
+                q.put(_node["right"])
+
+
+class BinarySearchTree(Traverse):
     """二分搜索树"""
 
     _not_result = ["left", "right"]  # search返回，不需要的字段
@@ -29,7 +88,7 @@ class BinarySearchTree:
     def _get_result(self, node):
         return {k: node[k] for k in node if k not in self._not_result}
 
-    def update_node(self, value, node):
+    def _update_node(self, value, node):
         """把新节点拿过来，更新数据"""
         _node = {
             "value": value,
@@ -65,7 +124,7 @@ class BinarySearchTree:
         :return:
         """
         if not self.root:
-            self.update_node(value, self.root)
+            self._update_node(value, self.root)
             return
 
         cur_node = self.root
@@ -80,17 +139,27 @@ class BinarySearchTree:
                 cur_node["num"] += 1
                 return
 
-        self.update_node(value, cur_node)
+        self._update_node(value, cur_node)
 
     @classmethod
     def show(cls):
         r = cls()
-        for i in [10, 11, 12, 13, 9, 8, 7, 6, 9]:
+        for i in tool.build_test_list(10, 0, 100):
             r.insert(i)
 
         print(10 in r)
         print(r.search(9))
+        r.pre_order(r.root)
+        print()
+        r.in_order(r.root)
+        print()
+        r.post_order(r.root)
+        print()
+        r.level_order(r.root)
+        print()
 
+
+bst = BinarySearchTree
 
 if __name__ == '__main__':
-    BinarySearchTree.show()
+    bst.show()

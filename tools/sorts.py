@@ -2,8 +2,8 @@
 # __author: a123456
 import random
 
-from tools import run_time, tool
-from tree import MaxHeap, MaxHeap2, MaxHeap3
+from tools.helper import run_time, tool
+from tree.heap import MaxHeap, MaxHeap2, MaxHeap3
 
 
 class T:

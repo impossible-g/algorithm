@@ -2,7 +2,7 @@
 # __author: a123456
 import random
 
-from tools import sort, tool
+from tools.helper import tool
 
 
 def partition(arr, l, r):

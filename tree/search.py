@@ -1,6 +1,6 @@
 # _*_coding:utf-8_*_
 # __author: a123456
-from tools import tool, sort, run_time
+from tools.helper import run_time, tool
 
 
 class S:
