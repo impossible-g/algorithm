@@ -21,6 +21,7 @@ def run_time(func):
 
 
 class T:
+
     @classmethod
     @run_time
     def build_test_list(cls, n: int, range_l: int = 0, range_r: int = 10) -> []:

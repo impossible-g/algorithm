@@ -2,6 +2,7 @@
 # __author: a123456
 import queue
 import sys
+from time import time
 
 from tools.helper import tool
 
@@ -93,6 +94,7 @@ class BinarySearchTree(Traverse):
         _node = {
             "value": value,
             "num": 1,
+            "rank": 1,
             "left": {},
             "right": {},
         }
@@ -129,6 +131,7 @@ class BinarySearchTree(Traverse):
 
         cur_node = self.root
         while cur_node:
+            cur_node["rank"] += 1
             cur_value = cur_node["value"]
 
             if cur_value > value:
@@ -136,27 +139,115 @@ class BinarySearchTree(Traverse):
             elif cur_value < value:
                 cur_node = cur_node["right"]
             else:
-                cur_node["num"] += 1
-                return
+                cur_node = cur_node["left"]
+                sub_value = cur_node.get("value", None)
+                if sub_value is None or cur_value != sub_value:
+                    break
 
         self._update_node(value, cur_node)
+
+    def _get_min(self, node, use=0):
+        if node["left"]:
+            if use == 1:
+                node["rank"] -= 1
+
+            return self._get_min(node["left"])
+
+        return node
+
+    def get_min(self):
+        node = self._get_min(self.root)
+        return node
+
+    def _get_max(self, node, use=0):
+        if node["right"]:
+            if use == 1:
+                node["rank"] -= 1
+
+            return self._get_max(node["right"])
+
+        return node
+
+    def get_max(self):
+        node = self._get_max(self.root)
+        return node
+
+    def del_min(self):
+        node = self._get_min(self.root, use=1)
+        node.clear()
+        self.count -= 1
+
+    def del_max(self):
+        node = self._get_max(self.root, use=1)
+        node.clear()
+        self.count -= 1
+
+    def rank(self, value):
+        """查找一个元素的排名"""
+        if not self.root:
+            return None
+
+        rank = 1
+        cur_node = self.root
+        while cur_node:
+            cur_value = cur_node["value"]
+
+            if cur_value > value:
+                cur_node = cur_node["left"]
+            elif cur_value < value:
+                # 如果当前值小于要查询的值， rank加上当前节点左孩子的rank加1
+                rank += cur_node["left"].get("rank", 0) + 1
+                cur_node = cur_node["right"]
+            else:
+                cur_node = cur_node["left"]
+                sub_value = cur_node.get("value", None)
+                if sub_value is None or cur_value != sub_value:
+                    rank += cur_node.get("rank", 0)
+                    return rank
+
+        return None
+
+    def select(self):
+        """查看排名第几的是什么元素"""
+        pass
+
+    def ceil(self):
+        pass
+
+    def floor(self):
+        pass
 
     @classmethod
     def show(cls):
         r = cls()
-        for i in tool.build_test_list(10, 0, 100):
+        arr = tool.build_test_list(5, 0, 100)
+        arr.append(0)
+        arr.append(0)
+        arr.append(0)
+        arr.append(0)
+        arr.append(0)
+        arr.append(50)
+        arr.append(50)
+        arr.append(50)
+        t = time()
+        for i in arr:
             r.insert(i)
+        print(time() - t)
 
-        print(10 in r)
-        print(r.search(9))
-        r.pre_order(r.root)
-        print()
+        # print(50 in r)
+        # print(r.search(0))
+        # r.pre_order(r.root)
+        # print()
         r.in_order(r.root)
         print()
-        r.post_order(r.root)
-        print()
-        r.level_order(r.root)
-        print()
+        t = time()
+        print("rank", r.rank(0))
+        print((time() - t) * 1000)
+        # r.post_order(r.root)
+        # print()
+        # r.level_order(r.root)
+        # print()
+
 
 
 bst = BinarySearchTree
