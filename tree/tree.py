@@ -63,8 +63,6 @@ class Traverse:
 class BinarySearchTree(Traverse):
     """二分搜索树"""
 
-    _not_result = ["left", "right"]  # search返回，不需要的字段
-
     def __init__(self):
         self.root = {}
         self.count = 0
@@ -87,7 +85,7 @@ class BinarySearchTree(Traverse):
         return False
 
     def _get_result(self, node):
-        return {k: node[k] for k in node if k not in self._not_result}
+        return node
 
     def _update_node(self, value, node):
         """把新节点拿过来，更新数据"""
@@ -101,13 +99,15 @@ class BinarySearchTree(Traverse):
         node.update(_node)
         self.count += 1
 
-    def search(self, value):
+    def search(self, value, use=0):
         if not self.root:
             return None
 
         cur_node = self.root
         while cur_node:
             cur_value = cur_node["value"]
+            if use == 1:
+                cur_node["sub_num"] -= 1
 
             if cur_value > value:
                 cur_node = cur_node["left"]
@@ -231,20 +231,78 @@ class BinarySearchTree(Traverse):
 
         return None
 
-    def ceil(self):
-        pass
+    def _floor(self, value, node):
+        if not node:
+            return None
 
-    def floor(self):
-        pass
+        if not node["right"]:
+            return node
+        elif node["right"]["value"] < value:
+            return self._floor(value, node["right"])
+        elif node["right"]["value"] > value:
+            return self._floor(value, node["left"])
+        else:
+            return node["right"]
 
-    def del_ele(self):
-        pass
+    def floor(self, value, node):
+        if not node:
+            return None
+
+        if node["value"] > value:
+            return self.floor(value, node["left"])
+        elif node["value"] < value:
+            return self.floor(value, node["right"])
+        else:
+            return node["left"]
+
+    def get_floor(self, value):
+        return self.floor(value, self.root)
+
+    def del_ele(self, value):
+        """
+        删除任意节点，
+            使用它左子树的最大节点代替 或者 使用它右子树的最小节点代替
+        """
+        if value not in self:
+            return
+
+        self.count -= 1
+        node = self.search(value, use=1)
+
+        if node["left"]:
+            _node = self._get_max(node["left"], use=1)
+        elif node["right"]:
+            _node = self._get_min(node["right"], use=1)
+        else:
+            node.clear()
+            return
+
+        node["value"] = _node["value"]
+        _node.clear()
+        return
+
+    @classmethod
+    def test_rank(cls):
+        r = cls()
+        num = 88888
+        arr = tool.build_test_list(5000, 0, 1000000, no_print=True)
+        arr.append(num)
+        arr.sort()
+        for i in arr:
+            r.insert(i)
+
+        r1 = arr.index(num) + 1
+        r2 = r.rank(num)
+
+        print(r1 == r2, r1, r2)
 
     @classmethod
     def show(cls):
         r = cls()
-        arr = tool.build_test_list(5, 0, 100)
-        arr.append(50)
+        num = 8888
+        arr = tool.build_test_list(500, 0, 100000)
+        arr.append(num)
+
         t = time()
         for i in arr:
             r.insert(i)
@@ -254,16 +312,9 @@ class BinarySearchTree(Traverse):
         # print(r.search(0))
         # r.pre_order(r.root)
         # print()
-        r.in_order(r.root)
-        print()
-        t = time()
-        rank = r.rank(50)
-        node = r.select(rank)
 
-        print("node-->", node)
-
-        print("rank-->", rank)
-        print(1)
+        # for i in arr:
+        #     r.del_ele(i)
         # r.post_order(r.root)
         # print()
         # r.level_order(r.root)
@@ -273,4 +324,5 @@ class BinarySearchTree(Traverse):
 bst = BinarySearchTree
 
 if __name__ == '__main__':
-    bst.show()
+    # bst.show()
+    [bst.test_rank() for i in range(100)]

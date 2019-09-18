@@ -10,6 +10,11 @@ def run_time(func):
 
     @wraps(func)  # 获取函数自身名称
     def inner(*args, **kwargs):
+        no_print = kwargs.get("no_print")
+        if no_print:
+            kwargs.pop("no_print")
+            return func(*args, **kwargs)
+
         begin = time.time()
         result = func(*args, **kwargs)
         end = time.time()
