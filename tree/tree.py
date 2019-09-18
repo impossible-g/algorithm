@@ -93,8 +93,8 @@ class BinarySearchTree(Traverse):
         """把新节点拿过来，更新数据"""
         _node = {
             "value": value,
-            "num": 1,
-            "rank": 1,
+            "num": 1,  # 重复加1
+            "sub_num": 1,  # 子节点数量
             "left": {},
             "right": {},
         }
@@ -131,7 +131,7 @@ class BinarySearchTree(Traverse):
 
         cur_node = self.root
         while cur_node:
-            cur_node["rank"] += 1
+            cur_node["sub_num"] += 1
             cur_value = cur_node["value"]
 
             if cur_value > value:
@@ -149,7 +149,7 @@ class BinarySearchTree(Traverse):
     def _get_min(self, node, use=0):
         if node["left"]:
             if use == 1:
-                node["rank"] -= 1
+                node["sub_num"] -= 1
 
             return self._get_min(node["left"])
 
@@ -162,7 +162,7 @@ class BinarySearchTree(Traverse):
     def _get_max(self, node, use=0):
         if node["right"]:
             if use == 1:
-                node["rank"] -= 1
+                node["sub_num"] -= 1
 
             return self._get_max(node["right"])
 
@@ -195,21 +195,41 @@ class BinarySearchTree(Traverse):
             if cur_value > value:
                 cur_node = cur_node["left"]
             elif cur_value < value:
-                # 如果当前值小于要查询的值， rank加上当前节点左孩子的rank加1
-                rank += cur_node["left"].get("rank", 0) + 1
+                # 如果当前值小于要查询的值， rank加上当前节点左孩子的sub_num加1
+                rank += cur_node["left"].get("sub_num", 0) + 1
                 cur_node = cur_node["right"]
             else:
                 cur_node = cur_node["left"]
                 sub_value = cur_node.get("value", None)
                 if sub_value is None or cur_value != sub_value:
-                    rank += cur_node.get("rank", 0)
+                    rank += cur_node.get("sub_num", 0)
                     return rank
 
         return None
 
-    def select(self):
+    def select(self, rank):
         """查看排名第几的是什么元素"""
-        pass
+        if not self.root:
+            return None
+
+        _rank = 0
+        cur_node = self.root
+        while cur_node:
+            left_sub_num = cur_node["left"].get("sub_num", 0)
+
+            if left_sub_num >= rank - _rank:
+                # 如果排名小于左边子节点数量，表示这个排名在左边子节点内
+                cur_node = cur_node["left"]
+            elif left_sub_num < rank - _rank:
+                # 如果当前值小于要查询的值， rank加上当前节点左孩子的sub_num加1
+                _rank += cur_node["left"].get("sub_num", 0) + 1
+                if _rank == rank:
+                    # 如果排名相同，则返回当前节点
+                    return cur_node
+
+                cur_node = cur_node["right"]
+
+        return None
 
     def ceil(self):
         pass
@@ -217,17 +237,13 @@ class BinarySearchTree(Traverse):
     def floor(self):
         pass
 
+    def del_ele(self):
+        pass
+
     @classmethod
     def show(cls):
         r = cls()
         arr = tool.build_test_list(5, 0, 100)
-        arr.append(0)
-        arr.append(0)
-        arr.append(0)
-        arr.append(0)
-        arr.append(0)
-        arr.append(50)
-        arr.append(50)
         arr.append(50)
         t = time()
         for i in arr:
@@ -241,13 +257,17 @@ class BinarySearchTree(Traverse):
         r.in_order(r.root)
         print()
         t = time()
-        print("rank", r.rank(0))
-        print((time() - t) * 1000)
+        rank = r.rank(50)
+        node = r.select(rank)
+
+        print("node-->", node)
+
+        print("rank-->", rank)
+        print(1)
         # r.post_order(r.root)
         # print()
         # r.level_order(r.root)
         # print()
-
 
 
 bst = BinarySearchTree
