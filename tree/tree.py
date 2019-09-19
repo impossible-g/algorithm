@@ -348,8 +348,7 @@ class BinarySearchTree(Traverse):
         f2 = r.floor(value).get("value", 0)
 
         if f1 != f2:
-            print(f1, f2)
-            raise
+            raise Exception(f1, f2)
 
     @classmethod
     def test_ceil(cls):
@@ -374,8 +373,7 @@ class BinarySearchTree(Traverse):
         f2 = r.ceil(value).get("value", 0)
 
         if f1 != f2:
-            print(f1, f2)
-            raise
+            raise Exception(f1, f2)
 
     @classmethod
     def test_insert(cls):
@@ -388,7 +386,7 @@ class BinarySearchTree(Traverse):
         r.in_order(r.root)
         arr.sort()
         if r.temp_li != arr:
-            raise
+            raise Exception(r.temp_li, arr)
 
 
 bst = BinarySearchTree
@@ -396,7 +394,7 @@ bst = BinarySearchTree
 if __name__ == '__main__':
     # [bst.test_rank() for i in range(100)]
     # [bst.test_insert() for i in range(100)]
-    # [bst.test_floor() for i in range(100)]
-    for i in range(100000):
+    [bst.test_floor() for i in range(100)]
+    for i in range(100):
         print(f"\r{i}", end="")
         bst.test_ceil()
