@@ -90,19 +90,20 @@ class BinarySearchTree(Traverse):
     def _get_result(self, node):
         return node
 
-    def _update_node(self, value, node):
+    def _update_node(self, value, node, **kwargs):
         """把新节点拿过来，更新数据"""
         _node = {
             "value": value,
             "num": 1,  # 重复加1
-            "sub_num": 1,  # 子节点数量
+            "sub_num": 1,  # 子节点数量, 包含自身
             "left": {},
             "right": {},
         }
         node.update(_node)
+        node.update(kwargs)
         self.count += 1
 
-    def _insert_node(self, value, node):
+    def _insert_node(self, value, node, **kwargs):
         _node = {
             "value": value,
             "num": 1,
@@ -113,6 +114,8 @@ class BinarySearchTree(Traverse):
         if node:
             k = "left" if node["value"] < value else "right"
             _node[k] = node
+        _node.update(kwargs)
+        self.count += 1
         return _node
 
     def search(self, value, use=0):
@@ -156,11 +159,13 @@ class BinarySearchTree(Traverse):
                 cur_node = cur_node["right"]
             else:
                 p_node = cur_node
+                p_node["num"] += 1
+                num = p_node["num"]
                 cur_node = cur_node["left"]
                 sub_value = cur_node.get("value", None)
                 if sub_value is None or cur_value != sub_value:
                     # todo 新节点继承老节点所有东西
-                    p_node["left"] = self._insert_node(value, cur_node)
+                    p_node["left"] = self._insert_node(value, cur_node, num=num)
                     return
 
         self._update_node(value, cur_node)
@@ -379,6 +384,7 @@ class BinarySearchTree(Traverse):
     def test_insert(cls):
         r = cls()
         arr = tool.build_test_list(5000, 0, 100000, no_print=True)
+        # arr = [1, 1, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10]
         for i in arr:
             r.insert(i)
 
@@ -393,7 +399,7 @@ bst = BinarySearchTree
 
 if __name__ == '__main__':
     # [bst.test_rank() for i in range(100)]
-    # [bst.test_insert() for i in range(100)]
+    [bst.test_insert() for i in range(100)]
     [bst.test_floor() for i in range(100)]
     for i in range(100):
         print(f"\r{i}", end="")
