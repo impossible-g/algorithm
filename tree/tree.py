@@ -63,6 +63,9 @@ class Traverse:
 class BinarySearchTree(Traverse):
     """二分搜索树"""
 
+    def operate(self, node):
+        self.temp_li.append(node["value"])
+
     def __init__(self):
         self.root = {}
         self.count = 0
@@ -98,6 +101,19 @@ class BinarySearchTree(Traverse):
         }
         node.update(_node)
         self.count += 1
+
+    def _insert_node(self, value, node):
+        _node = {
+            "value": value,
+            "num": 1,
+            "sub_num": node.get("sub_num", 0) + 1,
+            "left": {},
+            "right": {},
+        }
+        if node:
+            k = "left" if node["value"] < value else "right"
+            _node[k] = node
+        return _node
 
     def search(self, value, use=0):
         if not self.root:
@@ -139,10 +155,13 @@ class BinarySearchTree(Traverse):
             elif cur_value < value:
                 cur_node = cur_node["right"]
             else:
+                p_node = cur_node
                 cur_node = cur_node["left"]
                 sub_value = cur_node.get("value", None)
                 if sub_value is None or cur_value != sub_value:
-                    break
+                    # todo 新节点继承老节点所有东西
+                    p_node["left"] = self._insert_node(value, cur_node)
+                    return
 
         self._update_node(value, cur_node)
 
@@ -233,30 +252,40 @@ class BinarySearchTree(Traverse):
 
     def _floor(self, value, node):
         if not node:
-            return None
-
-        if not node["right"]:
             return node
-        elif node["right"]["value"] < value:
-            return self._floor(value, node["right"])
-        elif node["right"]["value"] > value:
-            return self._floor(value, node["left"])
-        else:
-            return node["right"]
-
-    def floor(self, value, node):
-        if not node:
-            return None
 
         if node["value"] > value:
-            return self.floor(value, node["left"])
-        elif node["value"] < value:
-            return self.floor(value, node["right"])
+            return self._floor(value, node["left"])
+        elif node["value"] < value and node["right"] and (
+                node["right"]["value"] <= value or self._get_min(node["right"])["value"] <= value):
+            # 如果当前节点小于28，那么当前节点的左子树是不用考虑的，
+            # 如果当前节点右子节点小于28，则从右节点继续循环
+            return self._floor(value, node["right"])
         else:
-            return node["left"]
+            return node
 
-    def get_floor(self, value):
-        return self.floor(value, self.root)
+    def floor(self, value):
+        return self._floor(value, self.root)
+
+    def _ceil(self, value, node):
+        if not node:
+            return node
+
+        if node["value"] > value and node["left"] and (
+                node["left"]["value"] >= value or self._get_max(node["left"])["value"] >= value):
+            # 如果当前节点大于28，那么当前节点的右子树是不用考虑的
+            # 如果当前节点的左子节点大于28，则从左子节点继续循环
+            return self._ceil(value, node["left"])
+        elif node["value"] < value:
+            return self._ceil(value, node["right"])
+        else:
+            return node
+
+    def ceil(self, value):
+        return self._ceil(value, self.root)
+
+    def get_floor_and_ceil(self, value):
+        return self.floor(value), self.ceil(value)
 
     def del_ele(self, value):
         """
@@ -285,7 +314,7 @@ class BinarySearchTree(Traverse):
     def test_rank(cls):
         r = cls()
         num = 88888
-        arr = tool.build_test_list(5000, 0, 1000000, no_print=True)
+        arr = tool.build_test_list(5000, 0, 10000, no_print=True)
         arr.append(num)
         arr.sort()
         for i in arr:
@@ -297,32 +326,77 @@ class BinarySearchTree(Traverse):
         print(r1 == r2, r1, r2)
 
     @classmethod
-    def show(cls):
+    def test_floor(cls):
         r = cls()
-        num = 8888
-        arr = tool.build_test_list(500, 0, 100000)
-        arr.append(num)
+        value = 888
+        arr = tool.build_test_list(20, 0, 10000, no_print=True)
 
-        t = time()
         for i in arr:
             r.insert(i)
-        print(time() - t)
+            a = 449 in r
 
-        # print(50 in r)
-        # print(r.search(0))
-        # r.pre_order(r.root)
-        # print()
+        base_arr = arr.copy()
+        arr.sort()
+        f1 = 0
+        for i in arr:
+            if i - value < 0:
+                f1 = i
+            elif i - value == 0:
+                f1 = i
+                break
 
-        # for i in arr:
-        #     r.del_ele(i)
-        # r.post_order(r.root)
-        # print()
-        # r.level_order(r.root)
-        # print()
+        f2 = r.floor(value).get("value", 0)
+
+        if f1 != f2:
+            print(f1, f2)
+            raise
+
+    @classmethod
+    def test_ceil(cls):
+        r = cls()
+        value = 888
+        arr = tool.build_test_list(500, 0, 10000, no_print=True)
+
+        for i in arr:
+            r.insert(i)
+
+        base_arr = arr.copy()
+        arr.sort()
+        f1 = 0
+        for i in arr:
+            if i - value > 0:
+                f1 = i
+                break
+            elif i - value == 0:
+                f1 = i
+                break
+
+        f2 = r.ceil(value).get("value", 0)
+
+        if f1 != f2:
+            print(f1, f2)
+            raise
+
+    @classmethod
+    def test_insert(cls):
+        r = cls()
+        arr = tool.build_test_list(5000, 0, 100000, no_print=True)
+        for i in arr:
+            r.insert(i)
+
+        r.temp_li = []
+        r.in_order(r.root)
+        arr.sort()
+        if r.temp_li != arr:
+            raise
 
 
 bst = BinarySearchTree
 
 if __name__ == '__main__':
-    # bst.show()
-    [bst.test_rank() for i in range(100)]
+    # [bst.test_rank() for i in range(100)]
+    # [bst.test_insert() for i in range(100)]
+    # [bst.test_floor() for i in range(100)]
+    for i in range(100000):
+        print(f"\r{i}", end="")
+        bst.test_ceil()
