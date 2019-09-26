@@ -61,7 +61,9 @@ class Traverse:
 
 
 class BinarySearchTree(Traverse):
-    """二分搜索树"""
+    """
+    二分搜索树，缺点如果数据是有序的，则会退化成为链表
+    """
 
     def operate(self, node):
         self.temp_li.append(node["value"])
