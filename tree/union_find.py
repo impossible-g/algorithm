@@ -7,10 +7,6 @@ class UF:
         self.parent = []  # 记录每个点的前导是什么
         self.rank = []  # rank[i]表示跟节点为i的的树的高度
 
-    @property
-    def count(self):
-        return len(self.parent) - 1
-
     def add(self, e):
         self.parent.append(e)
         self.rank.append(1)
