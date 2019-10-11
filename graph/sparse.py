@@ -1,6 +1,6 @@
 # _*_coding:utf-8_*_
 # __author: a123456
-class DenseGraph:
+class SparseGraph:
     """
     稀疏图：使用邻接表实现
         {
@@ -16,11 +16,20 @@ class DenseGraph:
         self.__directed = directed  # 是否有向
         self.g = {i: set() for i in range(n)}
 
+        self.count = 0  # 联通分量
+        self.visited = []  # 遍历所得结果
+        self._ids = {}  # 使用并查集的方式判断两点是否相连接
+
+    def clear(self):
+        self.count = 0  # 联通分量
+        self.visited = []  # 遍历所得结果
+        self._ids = {}  # 使用并查集的方式判断两点是否相连接
+
     @property
     def directed(self):
         return self.__directed
 
-    def add_edge(self, v: int, w: int):
+    def add_edge(self, v, w):
         """
         添加一条边
         :param v: 点的名称
@@ -36,7 +45,7 @@ class DenseGraph:
 
         self.m += 1
 
-    def has_edge(self, v: int, w: int) -> bool:
+    def has_edge(self, v, w) -> bool:
         """
         判断这条边存不存在
         :param v:
@@ -48,14 +57,26 @@ class DenseGraph:
 
         return w in self.g[v]
 
-    @classmethod
-    def test(cls):
-        obj = cls(10, False)
+    def _dfs(self, v, result, write_ids):
+        for point in self.g[v]:
+            if point not in result:
+                if write_ids: self._ids[point] = self.count
 
-        obj.add_edge(9, 9)
-        obj.add_edge(9, 8)
-        print(1)
+                result.append(point)
+                self._dfs(point, result, write_ids)
 
+    def dfs(self, v, write_ids=False):
+        result = self.visited
+        self._dfs(v, result, write_ids)
+        return result
 
-if __name__ == '__main__':
-    DenseGraph.test()
+    def count_dfs(self):
+        for point in self.g:
+            if point not in self.visited:
+                self.count += 1
+                self.visited.append(point)
+                self._ids[point] = self.count
+                self.visited = self.dfs(point, write_ids=True)
+
+    def is_connected(self, v, w):
+        return self._ids[v] == self._ids[w]
